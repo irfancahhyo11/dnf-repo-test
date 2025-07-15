@@ -38,12 +38,15 @@ jobs:
         working-directory: ./repo
         run: |
           mkdir -p dnf-repo-test/Packages
-          cd dnf-repo-test/Packages
+          cd dnf-repo-test/
+          rm -rf repodata
           cd ../..
 
       - name: Update repository metadata
         working-directory: ./repo
-        run: createrepo --update --verbose dnf-repo-test
+        #run: createrepo --update --verbose dnf-repo-test
+        #run: createrepo --update dnf-repo-test
+        run: createrepo dnf-repo-test
 
       - name: Commit and push changes
         working-directory: ./repo

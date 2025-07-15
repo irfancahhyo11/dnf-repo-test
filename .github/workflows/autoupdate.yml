@@ -4,7 +4,7 @@ on:
   push:
     branches: [ main ]
     #paths:
-    #  - 'dnf-repo-test/Packages/**'
+    #  - 'dnf-repo-test/Packages/**' # no
 
 jobs:
   update:

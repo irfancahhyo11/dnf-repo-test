@@ -17,8 +17,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          sudo apt update
-          sudo apt install -y createrepo git  # Для createrepo и Git[6][9]
+          sudo dnf update
+          sudo dnf install createrepo git  # Для createrepo и Git[6][9]
           # Если используешь LFS: sudo apt install -y git-lfs && git lfs install
 
       - name: Update repository metadata

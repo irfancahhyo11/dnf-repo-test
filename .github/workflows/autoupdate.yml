@@ -39,11 +39,6 @@ jobs:
         run: |
           mkdir -p dnf-repo-test/Packages
           cd dnf-repo-test/Packages
-          for pkg in *.rpm; do
-            if ! rpm -K "$pkg"; then
-              echo "Повреждённый пакет: $pkg — удаляем"
-              rm "$pkg"
-            fi
           done
           cd ../..
 

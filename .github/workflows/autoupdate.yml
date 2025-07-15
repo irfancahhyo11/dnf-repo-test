@@ -4,33 +4,57 @@ on:
   push:
     branches: [ main ]
     #paths:
-    #  - 'my-repo/Packages/**'  # Триггер только на изменения в Packages
+    #  - 'dnf-repo-test/Packages/**'
 
 jobs:
   update:
     runs-on: ubuntu-latest
-    container: fedora:latest  
+    container: fedora:latest
+    defaults:
+      run:
+        working-directory: ./repo  # Явная рабочая директория для всех шагов
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4  # Получаем код репозитория[2]
+        uses: actions/checkout@v4
+        with:
+          path: repo  # Checkout в поддиректорию 'repo' для изоляции
 
       - name: Install dependencies
+        run: dnf install -y createrepo git rpm
+
+      - name: Verify Git repository
         run: |
-          sudo dnf update --assumeyes
-          sudo dnf install --assumeyes createrepo git # Для createrepo и Git[6][9]
-          sudo dnf install --assumeyes git-lfs && git lfs install
+          if [ ! -d ".git" ]; then
+            echo "Репозиторий не найден — инициализируем"
+            git init
+            git remote add origin https://github.com/${{ github.repository }}.git
+            git fetch
+            git checkout -t origin/main
+          fi
+          git status  # Проверка
+
+      - name: Check and fix RPM files
+        run: |
+          mkdir -p dnf-repo-test/Packages
+          cd dnf-repo-test/Packages
+          for pkg in *.rpm; do
+            if ! rpm -K "$pkg"; then
+              echo "Повреждённый пакет: $pkg — удаляем"
+              rm "$pkg"
+            fi
+          done
+          cd ../..
 
       - name: Update repository metadata
-        run: createrepo --update dnf-repo-test  # Обновляем метаданные без полного пересоздания[6][12]
+        run: createrepo --update --verbose dnf-repo-test
 
       - name: Commit and push changes
         run: |
-          export GIT_DISCOVERY_ACROSS_FILESYSTEM=1 
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
-          git add my-repo/repodata/
-          git commit -m "Автоматическое обновление метаданных репозитория" || echo "Нет изменений"
-          git push
+          git add dnf-repo-test/
+          git commit -m "Автоматическое обновление: исправлены пакеты" || echo "Нет изменений"
+          git push origin main
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Токен для push[2][5]
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

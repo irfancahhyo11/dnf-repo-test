@@ -44,9 +44,9 @@ jobs:
 
       - name: Update repository metadata
         working-directory: ./repo
-        #run: createrepo --update --verbose dnf-repo-test
+        run: createrepo --update --verbose dnf-repo-test
         #run: createrepo --update dnf-repo-test
-        run: createrepo dnf-repo-test
+        #run: createrepo dnf-repo-test
 
       - name: Commit and push changes
         working-directory: ./repo

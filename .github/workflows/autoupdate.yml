@@ -17,9 +17,9 @@ jobs:
 
       - name: Install dependencies
         run: |
-          sudo dnf update
-          sudo dnf install -y createrepo git # Для createrepo и Git[6][9]
-          sudo dnf install -y git-lfs && git lfs install
+          sudo dnf update --assumeyes
+          sudo dnf install --assumeyes createrepo git # Для createrepo и Git[6][9]
+          sudo dnf install --assumeyes git-lfs && git lfs install
 
       - name: Update repository metadata
         run: createrepo --update dnf-repo-test  # Обновляем метаданные без полного пересоздания[6][12]

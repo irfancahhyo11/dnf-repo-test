@@ -3,8 +3,8 @@ name: Update DNF Repository
 on:
   push:
     branches: [ main ]
-    paths:
-      - 'my-repo/Packages/**'  # Триггер только на изменения в Packages
+    #paths:
+    #  - 'my-repo/Packages/**'  # Триггер только на изменения в Packages
 
 jobs:
   update:

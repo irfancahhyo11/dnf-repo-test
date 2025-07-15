@@ -38,7 +38,8 @@ jobs:
         working-directory: ./repo
         run: |
           mkdir -p dnf-repo-test/Packages
-          cd dnf-repo-test/Packages
+          cd dnf-repo-test/
+          rm -rf repodata
           cd ../..
 
       - name: Update repository metadata

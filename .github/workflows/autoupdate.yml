@@ -39,7 +39,6 @@ jobs:
         run: |
           mkdir -p dnf-repo-test/Packages
           cd dnf-repo-test/Packages
-          done
           cd ../..
 
       - name: Update repository metadata

@@ -1,5 +1,5 @@
 [dnf-repo-test]
 name=irfan repo
-baseurl=https://irfancahhyo11.github.io/dnf-repo-test/
+baseurl=https://irfancahhyo11.github.io/dnf-repo-test/dnf-repo-test/
 enabled=1
 gpgcheck=0

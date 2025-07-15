@@ -12,27 +12,24 @@ jobs:
     container: fedora:latest
     defaults:
       run:
-        working-directory: ./repo  # Явная рабочая директория для всех шагов
+        working-directory: ./repo
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repository with force
         uses: actions/checkout@v4
         with:
-          path: repo  # Checkout в поддиректорию 'repo' для изоляции
+          path: repo
+          fetch-depth: 0  # Полный fetch для избежания конфликтов
+          clean: true     # Автоматическая очистка untracked файлов
 
       - name: Install dependencies
         run: dnf install -y createrepo git rpm
 
-      - name: Verify Git repository
+      - name: Clean untracked files if needed
         run: |
-          if [ ! -d ".git" ]; then
-            echo "Репозиторий не найден — инициализируем"
-            git init
-            git remote add origin https://github.com/${{ github.repository }}.git
-            git fetch
-            git checkout -t origin/main
-          fi
-          git status  # Проверка
+          git clean -fdx  # Очистка untracked и ignored файлов (осторожно!)
+          git reset --hard HEAD  # Сброс изменений
+          git checkout main  # Переключение на main без конфликтов
 
       - name: Check and fix RPM files
         run: |
@@ -54,7 +51,7 @@ jobs:
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git add dnf-repo-test/
-          git commit -m "Автоматическое обновление: исправлены пакеты" || echo "Нет изменений"
+          git commit -m "Автоматическое обновление: исправлены конфликты и пакеты" || echo "Нет изменений"
           git push origin main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
